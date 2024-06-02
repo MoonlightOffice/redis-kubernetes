@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: go-pv
+  labels:
+    vol: go
+spec:
+  accessModes:
+  - ReadWriteOncePod
+  storageClassName: redis-sc
+  capacity:
+    storage: 10M
+  hostPath:
+    path: /Users/wobbuffet/Desktop/workspace/tutorial/redis/go-code
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: go-pvc
+spec:
+  accessModes:
+  - ReadWriteOncePod
+  storageClassName: redis-sc
+  resources:
+    requests:
+      storage: 10M
+  selector:
+    matchLabels:
+      vol: go
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: go
+spec:
+  type: LoadBalancer
+  selector:
+    app: go
+  ports:
+  - port: 6060
+    targetPort: 6060
+
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: go
+  labels:
+    app: go
+spec:
+  containers:
+  - name: go
+    image: registry.gitlab.com/moonlightoffice/secretsign/go
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 6060
+    volumeMounts:
+    - name: space
+      mountPath: /space
+    command: ["godoc", "-http", "0.0.0.0:6060"]
+  volumes:
+  - name: space
+    persistentVolumeClaim:
+      claimName: go-pvc
+  
