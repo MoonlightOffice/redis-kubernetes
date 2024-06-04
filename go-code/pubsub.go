@@ -63,3 +63,28 @@ func subscribe(ctx context.Context, rdb *redis.ClusterClient, channel string) {
 		}
 	}
 }
+
+func Subscribe2() {
+	ctx := context.Background()
+	rdb := GetClusterClient()
+
+	sub1 := rdb.Subscribe(ctx, "c1")
+	sub2 := rdb.Subscribe(ctx, "c2")
+	sub3 := rdb.Subscribe(ctx, "c3")
+
+	ch1 := sub1.Channel()
+	ch2 := sub2.Channel()
+	ch3 := sub3.Channel()
+
+	fmt.Println("Listening...")
+	for {
+		select {
+		case msg := <-ch1:
+			fmt.Printf("Channel %s: %s\n", msg.Channel, msg.Payload)
+		case msg := <-ch2:
+			fmt.Printf("Channel %s: %s\n", msg.Channel, msg.Payload)
+		case msg := <-ch3:
+			fmt.Printf("Channel %s: %s\n", msg.Channel, msg.Payload)
+		}
+	}
+}

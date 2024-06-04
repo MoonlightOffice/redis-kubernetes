@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: redis
 spec:
-  type: ClusterIP
+  clusterIP: None
   selector:
     app: redis
   ports:
@@ -51,7 +51,6 @@ spec:
           name: redis-config
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Delete
-    whenScaled: Delete
   volumeClaimTemplates:
   - metadata:
       name: redis-vol

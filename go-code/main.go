@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	PopulateCluster()
+	Subscribe2()
 }
 
 func GetClient() *redis.Client {
